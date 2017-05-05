@@ -1,36 +1,59 @@
 {
-    "name": "lartie/telegram-bot-pagination",
-    "description": "Telegram Bot Pagination ",
-    "keywords": ["laravel", "telegram api", "telegram", "pagination", "telegram-callback", "telegram bot"],
+    "name": "php-telegram-bot/inline-keyboard-pagination",
     "type": "library",
-    "homepage": "https://github.com/lartie/telegram-bot-pagination",
+    "description": "PHP Telegram Bot InlineKeyboard Pagination",
+    "keywords": ["telegram", "bot", "inline", "keyboard", "pagination", "callback", "query"],
     "license": "MIT",
+    "homepage": "https://github.com/php-telegram-bot/inline-keyboard-pagination",
+    "support": {
+        "issues": "https://github.com/php-telegram-bot/inline-keyboard-pagination/issues",
+        "source": "https://github.com/php-telegram-bot/inline-keyboard-pagination"
+    },
     "authors": [
+        {
+            "name": "Armando Lüscher",
+            "email": "armando@noplanman.ch",
+            "homepage": "https://noplanman.ch",
+            "role": "Developer"
+        },
         {
             "name": "Artie",
             "email": "log.wil.log@gmail.com",
-            "homepage": "https://github.com/lartie"
+            "homepage": "https://github.com/lartie",
+            "role": "Original developer"
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8 || ^5.0",
-        "phpspec/prophecy": "^1.5"
+        "jakub-onderka/php-parallel-lint": "^0.9.2",
+        "phpunit/phpunit": "^6.1",
+        "squizlabs/php_codesniffer": "^2.9"
     },
     "autoload": {
         "psr-4": {
-            "LArtie\\TelegramBotPagination\\": "src"
+            "TelegramBot\\InlineKeyboardPagination\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LArtie\\TelegramBotPagination\\Tests\\": "tests/"
+            "TelegramBot\\InlineKeyboardPagination\\Tests\\": "tests"
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "check-code": [
+            "vendor/bin/parallel-lint . --exclude vendor",
+            "vendor/bin/phpcs src/ tests/ -snp --standard=psr2 --encoding=utf-8 --report-width=150"
+        ],
+        "test": [
+            "vendor/bin/phpunit"
+        ],
+        "test-cov": [
+            "vendor/bin/phpunit --coverage-clover=clover.xml"
+        ],
+        "test-cov-upload": [
+            "curl -s https://codecov.io/bash | bash"
+        ]
     }
 }
-

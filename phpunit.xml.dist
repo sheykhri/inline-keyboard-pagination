@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./../../../vendor/autoload.php"
+<phpunit bootstrap="./vendor/autoload.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          beStrictAboutOutputDuringTests="true"
@@ -13,7 +13,7 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="Telegram Bot Pagination Test Suite">
+        <testsuite name="Inline Keyboard Pagination Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>

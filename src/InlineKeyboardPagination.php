@@ -1,16 +1,15 @@
 <?php
 
-namespace LArtie\TelegramBotPagination\Core;
+namespace TelegramBot\InlineKeyboardPagination;
 
-use Illuminate\Support\Facades\Validator;
-use LArtie\TelegramBotPagination\Contract\CallbackQueryPaginationContract;
-use LArtie\TelegramBotPagination\Exceptions\CallbackQueryPaginationException;
+use TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException;
 
 /**
- * Class CallbackQueryPagination
- * @package LArtie\TelegramBotPagination
+ * Class InlineKeyboardPagination
+ *
+ * @package TelegramBot\InlineKeyboardPagination
  */
-class CallbackQueryPagination implements CallbackQueryPaginationContract
+class InlineKeyboardPagination implements InlineKeyboardPaginator
 {
     /**
      * @var integer
@@ -54,35 +53,26 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
 
     /**
      * @inheritdoc
-     * @throws CallbackQueryPaginationException
+     * @throws InlineKeyboardPaginationException
      */
-    public function setMaxButtons(int $maxButtons = 5) : CallbackQueryPagination
+    public function setMaxButtons(int $maxButtons = 5): InlineKeyboardPagination
     {
-        /** @var \Illuminate\Validation\Validator $validator */
-        $validator = Validator::make(compact('maxButtons'), [
-            'maxButtons' => 'integer|between:5,8',
-        ]);
-
-        if ($validator->fails()) {
-            throw new CallbackQueryPaginationException($validator->errors()->first());
+        if ($maxButtons < 5 || $maxButtons > 8) {
+            throw new InlineKeyboardPaginationException('Invalid max buttons');
         }
         $this->maxButtons = $maxButtons;
+
         return $this;
     }
 
     /**
      * @inheritdoc
-     * @throws CallbackQueryPaginationException
+     * @throws InlineKeyboardPaginationException
      */
-    public function setWrapSelectedButton(string $wrapSelectedButton = '« #VALUE# »') : CallbackQueryPagination
+    public function setWrapSelectedButton(string $wrapSelectedButton = '« #VALUE# »'): InlineKeyboardPagination
     {
-        /** @var \Illuminate\Validation\Validator $validator */
-        $validator = Validator::make(compact('wrapSelectedButton'), [
-            'wrapSelectedButton' => 'regex:/#VALUE#/',
-        ]);
-
-        if ($validator->fails()) {
-            throw new CallbackQueryPaginationException($validator->errors()->first());
+        if (false === strpos($wrapSelectedButton, '/#VALUE#/')) {
+            throw new InlineKeyboardPaginationException('Invalid selected button wrapper');
         }
         $this->wrapSelectedButton = $wrapSelectedButton;
         return $this;
@@ -91,29 +81,24 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @inheritdoc
      */
-    public function setCommand(string $command = 'pagination'): CallbackQueryPagination
+    public function setCommand(string $command = 'pagination'): InlineKeyboardPagination
     {
         $this->command = $command;
+
         return $this;
     }
 
     /**
      * @inheritdoc
-     * @throws CallbackQueryPaginationException
+     * @throws InlineKeyboardPaginationException
      */
-    public function setSelectedPage(int $selectedPage): CallbackQueryPagination
+    public function setSelectedPage(int $selectedPage): InlineKeyboardPagination
     {
-        /** @var \Illuminate\Validation\Validator $validator */
-        $validator = Validator::make(
-            compact('selectedPage'),
-            ['selectedPage' => 'integer|between:1,' . $this->numberOfPages],
-            ['between' => 'The $selectedPage must be between 1 - $numberOfPages']
-        );
-
-        if ($validator->fails()) {
-            throw new CallbackQueryPaginationException($validator->errors()->first());
+        if ($selectedPage < 1 || $selectedPage > $this->numberOfPages) {
+            throw new InlineKeyboardPaginationException('Invalid selected page');
         }
         $this->selectedPage = $selectedPage;
+
         return $this;
     }
 
@@ -121,7 +106,7 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
      * TelegramBotPagination constructor.
      *
      * @inheritdoc
-     * @throws CallbackQueryPaginationException
+     * @throws InlineKeyboardPaginationException
      */
     public function __construct(array $items, string $command = 'pagination', int $selectedPage = 1, int $limit = 3)
     {
@@ -129,22 +114,22 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
 
         $this->setSelectedPage($selectedPage);
 
-        $this->items = $items;
-        $this->limit = $limit;
+        $this->items   = $items;
+        $this->limit   = $limit;
         $this->command = $command;
     }
 
     /**
      * @inheritdoc
-     * @throws CallbackQueryPaginationException
+     * @throws InlineKeyboardPaginationException
      */
-    public function paginate(int $selectedPage = null) : array
+    public function paginate(int $selectedPage = null): array
     {
         if ($selectedPage !== null) {
             $this->setSelectedPage($selectedPage);
         }
         return [
-            'items' => $this->getPreparedItems(),
+            'items'    => $this->getPreparedItems(),
             'keyboard' => $this->generateKeyboard(),
         ];
     }
@@ -152,7 +137,7 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @return array
      */
-    protected function generateKeyboard() : array
+    protected function generateKeyboard(): array
     {
         $buttons = [];
 
@@ -179,26 +164,26 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @return array
      */
-    protected function generateRange() : array
+    protected function generateRange(): array
     {
         $numberOfIntermediateButtons = $this->maxButtons - 2;
 
         if ($this->selectedPage == $this->firstPage) {
             $from = 2;
-            $to = $from + $numberOfIntermediateButtons;
-        } else if ($this->selectedPage == $this->numberOfPages) {
+            $to   = $from + $numberOfIntermediateButtons;
+        } elseif ($this->selectedPage == $this->numberOfPages) {
             $from = $this->numberOfPages - $numberOfIntermediateButtons;
-            $to = $this->numberOfPages;
+            $to   = $this->numberOfPages;
         } else {
             if (($this->selectedPage + $numberOfIntermediateButtons) > $this->numberOfPages) {
                 $from = $this->numberOfPages - $numberOfIntermediateButtons;
-                $to = $this->numberOfPages;
-            } else if (($this->selectedPage - 2) < $this->firstPage) {
+                $to   = $this->numberOfPages;
+            } elseif (($this->selectedPage - 2) < $this->firstPage) {
                 $from = $this->selectedPage;
-                $to = $this->selectedPage + $numberOfIntermediateButtons;
+                $to   = $this->selectedPage + $numberOfIntermediateButtons;
             } else {
                 $from = $this->selectedPage - 1;
-                $to = $this->selectedPage + 2;
+                $to   = $this->selectedPage + 2;
             }
         }
         return compact('from', 'to');
@@ -206,27 +191,29 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
 
     /**
      * @param int $nextPage
+     *
      * @return array
      */
-    protected function generateButton(int $nextPage) : array
+    protected function generateButton(int $nextPage): array
     {
-        $label = "$nextPage";
+        $label        = "$nextPage";
         $callbackData = $this->generateCallbackData($nextPage);
 
         if ($nextPage === $this->selectedPage) {
             $label = str_replace('#VALUE#', $label, $this->wrapSelectedButton);
         }
         return [
-            'text' => $label,
+            'text'          => $label,
             'callback_data' => $callbackData,
         ];
     }
 
     /**
      * @param int $nextPage
+     *
      * @return string
      */
-    protected function generateCallbackData(int $nextPage) : string
+    protected function generateCallbackData(int $nextPage): string
     {
         return "$this->command?currentPage=$this->selectedPage&nextPage=$nextPage";
     }
@@ -234,7 +221,7 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @return array
      */
-    protected function getPreparedItems() : array
+    protected function getPreparedItems(): array
     {
         $offset = $this->getOffset();
 
@@ -244,7 +231,7 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @return int
      */
-    protected function getOffset() : int
+    protected function getOffset(): int
     {
         return ($this->limit * $this->selectedPage) - $this->limit;
     }
@@ -252,12 +239,13 @@ class CallbackQueryPagination implements CallbackQueryPaginationContract
     /**
      * @param $itemsLength
      * @param $limit
+     *
      * @return int
      */
-    protected function countTheNumberOfPage($itemsLength, $limit) : int
+    protected function countTheNumberOfPage($itemsLength, $limit): int
     {
-        $numberOfPages = ceil($itemsLength/$limit);
+        $numberOfPages = ceil($itemsLength / $limit);
 
-        return (int)$numberOfPages;
+        return (int) $numberOfPages;
     }
 }
