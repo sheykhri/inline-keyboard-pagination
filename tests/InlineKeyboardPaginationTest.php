@@ -41,7 +41,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
         $this->selected_page = random_int(1, 15);
     }
 
-    public function test_valid_constructor()
+    public function testValidConstructor()
     {
         $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
@@ -57,13 +57,13 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      */
-    public function test_invalid_constructor()
+    public function testInvalidConstructor()
     {
         $ikp = new InlineKeyboardPagination($this->items, $this->command, 10000, $this->limit);
         $ikp->paginate();
     }
 
-    public function test_valid_paginate()
+    public function testValidPaginate()
     {
         $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
@@ -79,7 +79,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      */
-    public function test_invalid_paginate()
+    public function testInvalidPaginate()
     {
         $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
@@ -93,7 +93,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      */
-    public function test_invalid_max_buttons()
+    public function testInvalidMaxButtons()
     {
         $ikp = new InlineKeyboardPagination(range(1, 240));
         $ikp->setMaxButtons(2);
@@ -103,7 +103,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      */
-    public function test_invalid_selected_page()
+    public function testInvalidSelectedPage()
     {
         $ikp = new InlineKeyboardPagination(range(1, 240));
         $ikp->setSelectedPage(-5);
@@ -113,7 +113,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      */
-    public function test_invalid_wrap_selected_button()
+    public function testInvalidWrapSelectedButton()
     {
         $ikp = new InlineKeyboardPagination(range(1, 240));
         $ikp->setWrapSelectedButton('$sdlfk$');

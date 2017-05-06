@@ -144,7 +144,6 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
         $buttons = [];
 
         if ($this->number_of_pages > $this->max_buttons) {
-
             $buttons[] = $this->generateButton($this->first_page);
 
             $range = $this->generateRange();
@@ -154,7 +153,6 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
             }
 
             $buttons[] = $this->generateButton($this->number_of_pages);
-
         } else {
             for ($i = 1; $i <= $this->number_of_pages; $i++) {
                 $buttons[] = $this->generateButton($i);
