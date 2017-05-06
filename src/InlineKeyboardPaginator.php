@@ -45,9 +45,9 @@ interface InlineKeyboardPaginator
      * @param array  $items
      * @param string $command
      * @param int    $selected_page
-     * @param int    $limit
+     * @param int    $items_per_page
      */
-    public function __construct(array $items, string $command, int $selected_page, int $limit);
+    public function __construct(array $items, string $command, int $selected_page, int $items_per_page);
 
     /**
      * @param int $selected_page

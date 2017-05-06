@@ -12,7 +12,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @var int
      */
-    private $limit = 5;
+    private $items_per_page = 5;
 
     /**
      * @var int
@@ -43,11 +43,11 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
     public function testValidConstructor()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
 
         $data = $ikp->paginate();
 
-        $this->assertCount($this->limit, $data['items']);
+        $this->assertCount($this->items_per_page, $data['items']);
         $this->assertArrayHasKey('keyboard', $data);
         $this->assertArrayHasKey(0, $data['keyboard']);
         $this->assertArrayHasKey('text', $data['keyboard'][0]);
@@ -59,15 +59,15 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidConstructor()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, 10000, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, 10000, $this->items_per_page);
         $ikp->paginate();
     }
 
     public function testValidPaginate()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
 
-        $length = (int) ceil(count($this->items) / $this->limit);
+        $length = (int) ceil(count($this->items) / $this->items_per_page);
 
         for ($i = 1; $i < $length; $i++) {
             $ikp->paginate($i);
@@ -81,9 +81,9 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidPaginate()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
 
-        $length = (int) ceil(count($this->items) / $this->limit) + 1;
+        $length = (int) ceil(count($this->items) / $this->items_per_page) + 1;
 
         for ($i = $length; $i < $length * 2; $i++) {
             $ikp->paginate($i);
