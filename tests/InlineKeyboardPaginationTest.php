@@ -36,8 +36,8 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     {
         parent::__construct();
 
-        $this->items        = range(1, 100);
-        $this->command      = 'testCommand';
+        $this->items         = range(1, 100);
+        $this->command       = 'testCommand';
         $this->selected_page = random_int(1, 15);
     }
 
