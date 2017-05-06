@@ -28,9 +28,9 @@ composer require php-telegram-bot/inline-keyboard-pagination:^1.0.0
 
 ### Test Data
 ```php
-$items = range(1, 100);
-$command = 'testCommand'; // optional. Default: pagination
-$selectedPage = 10;       // optional. Default: 1
+$items         = range(1, 100); // required. 
+$command       = 'testCommand'; // optional. Default: pagination
+$selected_page = 10;            // optional. Default: 1
 ```
 
 ### How To Use
@@ -38,8 +38,8 @@ $selectedPage = 10;       // optional. Default: 1
 $ikp = new InlineKeyboardPagination($items, $command);
 $ikp->setMaxButtons(6);
 $ikp->setWrapSelectedButton('< #VALUE# >');
-    
-$pagination = $ikp->pagination($selectedPage); //$ikp->setSelectedPage($selectedPage);
+
+$pagination = $ikp->pagination($selected_page); //$ikp->setSelectedPage($selected_page);
 ```
 
 ### Result

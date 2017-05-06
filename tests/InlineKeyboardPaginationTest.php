@@ -17,7 +17,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @var int
      */
-    private $selectedPage;
+    private $selected_page;
 
     /**
      * @var string
@@ -38,12 +38,12 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
         $this->items        = range(1, 100);
         $this->command      = 'testCommand';
-        $this->selectedPage = random_int(1, 15);
+        $this->selected_page = random_int(1, 15);
     }
 
     public function test_valid_constructor()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selectedPage, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
         $data = $ikp->paginate();
 
@@ -65,7 +65,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
     public function test_valid_paginate()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selectedPage, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
         $length = (int) ceil(count($this->items) / $this->limit);
 
@@ -81,7 +81,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
      */
     public function test_invalid_paginate()
     {
-        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selectedPage, $this->limit);
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->limit);
 
         $length = (int) ceil(count($this->items) / $this->limit) + 1;
 
