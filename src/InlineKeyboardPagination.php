@@ -42,9 +42,16 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     private $command;
 
     /**
-     * @var string
+     * @var array
      */
-    private $wrap_selected_button = '« #VALUE# »';
+    private $labels = [
+        'default'  => '%d',
+        'first'    => '« %d',
+        'previous' => '‹ %d',
+        'current'  => '· %d ·',
+        'next'     => '%d ›',
+        'last'     => '%d »',
+    ];
 
     /**
      * @inheritdoc
@@ -61,15 +68,21 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
-     * @inheritdoc
-     * @throws InlineKeyboardPaginationException
+     * @return array
      */
-    public function setWrapSelectedButton(string $wrap_selected_button = '« #VALUE# »'): InlineKeyboardPagination
+    public function getLabels(): array
     {
-        if (false === strpos($wrap_selected_button, '/#VALUE#/')) {
-            throw new InlineKeyboardPaginationException('Invalid selected button wrapper');
-        }
-        $this->wrap_selected_button = $wrap_selected_button;
+        return $this->labels;
+    }
+
+    /**
+     * @param array $labels
+     *
+     * @return InlineKeyboardPagination
+     */
+    public function setLabels($labels): InlineKeyboardPagination
+    {
+        $this->labels = array_merge($this->labels, $labels);
 
         return $this;
     }
@@ -128,7 +141,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      * @inheritdoc
      * @throws InlineKeyboardPaginationException
      */
-    public function __construct(array $items, string $command = 'pagination', int $selected_page = 1, int $items_per_page = 3)
+    public function __construct(array $items, string $command = 'pagination', int $selected_page = 1, int $items_per_page = 5)
     {
         $this->number_of_pages = $this->countTheNumberOfPage(count($items), $items_per_page);
 
@@ -143,7 +156,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      * @inheritdoc
      * @throws InlineKeyboardPaginationException
      */
-    public function paginate(int $selected_page = null): array
+    public function getPagination(int $selected_page = null): array
     {
         if ($selected_page !== null) {
             $this->setSelectedPage($selected_page);
@@ -151,7 +164,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
 
         return [
             'items'    => $this->getPreparedItems(),
-            'keyboard' => $this->generateKeyboard(),
+            'keyboard' => [$this->generateKeyboard()],
         ];
     }
 
@@ -163,22 +176,49 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
         $buttons = [];
 
         if ($this->number_of_pages > $this->max_buttons) {
-            $buttons[] = $this->generateButton(1);
+            $buttons[1] = $this->generateButton(1);
 
             $range = $this->generateRange();
-
             for ($i = $range['from']; $i < $range['to']; $i++) {
-                $buttons[] = $this->generateButton($i);
+                $buttons[$i] = $this->generateButton($i);
             }
 
-            $buttons[] = $this->generateButton($this->number_of_pages);
+            $buttons[$this->number_of_pages] = $this->generateButton($this->number_of_pages);
         } else {
             for ($i = 1; $i <= $this->number_of_pages; $i++) {
-                $buttons[] = $this->generateButton($i);
+                $buttons[$i] = $this->generateButton($i);
             }
         }
 
-        return $buttons;
+        // Set the correct labels.
+        foreach ($buttons as $page => &$button) {
+            $in_first_block = $this->selected_page <= 3 && $page <= 3;
+            $in_last_block  = $this->selected_page >= $this->number_of_pages - 2 && $page >= $this->number_of_pages - 2;
+
+            $label_key = 'next';
+            if ($page === $this->selected_page) {
+                $label_key = 'current';
+            } elseif ($in_first_block || $in_last_block) {
+                $label_key = 'default';
+            } elseif ($page === 1) {
+                $label_key = 'first';
+            } elseif ($page === $this->number_of_pages) {
+                $label_key = 'last';
+            } elseif ($page < $this->selected_page) {
+                $label_key = 'previous';
+            }
+
+            $label = $this->labels[$label_key];
+
+            if ($label === '' || $label === null) {
+                $button = null;
+                continue;
+            }
+
+            $button['text'] = sprintf($label, $page);
+        }
+
+        return array_filter($buttons);
     }
 
     /**
@@ -217,16 +257,9 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      */
     protected function generateButton(int $next_page): array
     {
-        $label        = "$next_page";
-        $callbackData = $this->generateCallbackData($next_page);
-
-        if ($next_page === $this->selected_page) {
-            $label = str_replace('#VALUE#', $label, $this->wrap_selected_button);
-        }
-
         return [
-            'text'          => $label,
-            'callback_data' => $callbackData,
+            'text'          => "$next_page",
+            'callback_data' => $this->generateCallbackData($next_page),
         ];
     }
 

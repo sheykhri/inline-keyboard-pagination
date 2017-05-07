@@ -10,20 +10,21 @@ namespace TelegramBot\InlineKeyboardPagination;
 interface InlineKeyboardPaginator
 {
     /**
+     * InlineKeyboardPaginator constructor.
+     *
+     * @param array  $items
+     * @param string $command
+     * @param int    $selected_page
+     * @param int    $items_per_page
+     */
+    public function __construct(array $items, string $command, int $selected_page, int $items_per_page);
+
+    /**
      * @param int $max_buttons
      *
      * @return InlineKeyboardPagination
      */
     public function setMaxButtons(int $max_buttons = 5): InlineKeyboardPagination;
-
-    /**
-     * >#VALUE#<, <#VALUE#>, |#VALUE#| etc...
-     *
-     * @param string $wrap_selected_button
-     *
-     * @return InlineKeyboardPagination
-     */
-    public function setWrapSelectedButton(string $wrap_selected_button = '« #VALUE# »'): InlineKeyboardPagination;
 
     /**
      * @param string $command
@@ -40,19 +41,9 @@ interface InlineKeyboardPaginator
     public function setSelectedPage(int $selected_page): InlineKeyboardPagination;
 
     /**
-     * InlineKeyboardPaginator constructor.
-     *
-     * @param array  $items
-     * @param string $command
-     * @param int    $selected_page
-     * @param int    $items_per_page
-     */
-    public function __construct(array $items, string $command, int $selected_page, int $items_per_page);
-
-    /**
      * @param int $selected_page
      *
      * @return array
      */
-    public function paginate(int $selected_page = null): array;
+    public function getPagination(int $selected_page = null): array;
 }
