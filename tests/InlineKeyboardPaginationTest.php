@@ -98,6 +98,13 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
         $ikp->getPagination($ikp->getNumberOfPages() + 1);
     }
 
+    public function testSetMaxButtons()
+    {
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
+        $ikp->setMaxButtons(6);
+        self::assertTrue(true);
+    }
+
     /**
      * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
      * @expectedExceptionMessage Invalid max buttons, must be between 5 and 8.
@@ -117,6 +124,22 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     {
         $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
         $ikp->setSelectedPage(-5);
+        $ikp->getPagination();
+    }
+
+    public function testGetItemsPerPage()
+    {
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, 4);
+        self::assertEquals(4, $ikp->getItemsPerPage());
+    }
+
+    /**
+     * @expectedException \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException
+     * @expectedExceptionMessage Invalid number of items per page, must be at least 1
+     */
+    public function testInvalidItemsPerPage()
+    {
+        $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, 0);
         $ikp->getPagination();
     }
 
@@ -185,13 +208,16 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
         // custom labels, skipping some buttons
         // first, previous, current, next, last
-        $ikp10->setLabels([
+        $labels = [
             'first'    => '',
             'previous' => 'previous %d',
             'current'  => null,
             'next'     => '%d next',
             'last'     => 'last',
-        ]);
+        ];
+        $ikp10->setLabels($labels);
+        self::assertEquals($labels, $ikp10->getLabels());
+
         $keyboard = $ikp10->getPagination(5)['keyboard'];
         self::assertAllButtonPropertiesEqual([
             ['previous 4', '6 next', 'last'],
