@@ -31,28 +31,41 @@ composer require php-telegram-bot/inline-keyboard-pagination:^1.0.0
 $items         = range(1, 100); // required. 
 $command       = 'testCommand'; // optional. Default: pagination
 $selected_page = 10;            // optional. Default: 1
+$labels        = [              // optional. Change button labels
+    'first'    => '%d',
+    'previous' => 'previous %d',
+    'current'  => null,
+    'next'     => '%d next',
+    'last'     => '%d',
+];
 ```
 
 ### How To Use
 ```php
+// Define inline keyboard pagination.
 $ikp = new InlineKeyboardPagination($items, $command);
 $ikp->setMaxButtons(6);
-$ikp->setWrapSelectedButton('< #VALUE# >');
+$ikp->setLabels($labels);
 
-$pagination = $ikp->pagination($selected_page); //$ikp->setSelectedPage($selected_page);
+// Get pagination.
+$pagination = $ikp->getPagination($selected_page);
+
+// or, in 2 steps:
+$ikp->setSelectedPage($selected_page);
+$pagination = $ikp->getPagination();
 ```
 
 ### Result
 ```php
-if (!empty($paginate['keyboard'])) {
-    $paginate['keyboard'][0]['callback_data']; // testCommand?currentPage=10&nextPage=1
-    $paginate['keyboard'][1]['callback_data']; // testCommand?currentPage=10&nextPage=9
+if (!empty($pagination['keyboard'])) {
+    $pagination['keyboard'][0]['callback_data']; // testCommand?currentPage=10&nextPage=1
+    $pagination['keyboard'][1]['callback_data']; // testCommand?currentPage=10&nextPage=9
     ...
 
     $response = [
         'reply_markup' => json_encode([
             'inline_keyboard' => [
-                $paginate['keyboard'],
+                $pagination['keyboard'],
             ],
         ]),
     ];
