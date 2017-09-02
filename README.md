@@ -44,7 +44,7 @@ $labels        = [              // optional. Change button labels
 ```php
 // Define inline keyboard pagination.
 $ikp = new InlineKeyboardPagination($items, $command);
-$ikp->setMaxButtons(6);
+$ikp->setMaxButtons(7, true); // Second parameter set to always show 7 buttons if possible.
 $ikp->setLabels($labels);
 
 // Get pagination.
@@ -58,16 +58,16 @@ $pagination = $ikp->getPagination();
 ### Result
 ```php
 if (!empty($pagination['keyboard'])) {
-    $pagination['keyboard'][0]['callback_data']; // testCommand?currentPage=10&nextPage=1
-    $pagination['keyboard'][1]['callback_data']; // testCommand?currentPage=10&nextPage=9
+    $pagination['keyboard'][0]['callback_data']; // command=testCommand&currentPage=10&nextPage=1
+    $pagination['keyboard'][1]['callback_data']; // command=testCommand&currentPage=10&nextPage=7
     ...
 
     $response = [
-        'reply_markup' => json_encode([
+        'reply_markup' => [
             'inline_keyboard' => [
                 $pagination['keyboard'],
             ],
-        ]),
+        ],
     ];
 }
 ```

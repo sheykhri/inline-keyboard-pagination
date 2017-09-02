@@ -22,6 +22,11 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     private $max_buttons = 5;
 
     /**
+     * @var bool
+     */
+    private $force_button_count = false;
+
+    /**
      * @var integer
      */
     private $selected_page;
@@ -52,12 +57,13 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      * @inheritdoc
      * @throws InlineKeyboardPaginationException
      */
-    public function setMaxButtons(int $max_buttons = 5): InlineKeyboardPagination
+    public function setMaxButtons(int $max_buttons = 5, bool $force_button_count = false): InlineKeyboardPagination
     {
         if ($max_buttons < 5 || $max_buttons > 8) {
             throw new InlineKeyboardPaginationException('Invalid max buttons, must be between 5 and 8.');
         }
-        $this->max_buttons = $max_buttons;
+        $this->max_buttons        = $max_buttons;
+        $this->force_button_count = $force_button_count;
 
         return $this;
     }
@@ -187,7 +193,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
 
         return [
             'items'    => $this->getPreparedItems(),
-            'keyboard' => [$this->generateKeyboard()],
+            'keyboard' => $this->generateKeyboard(),
         ];
     }
 
@@ -244,7 +250,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
             $button['text'] = sprintf($label, $page);
         }
 
-        return array_filter($buttons);
+        // Pagination has 1 single row of buttons, so wrap in (row) array.
+        return [array_values(array_filter($buttons))];
     }
 
     /**
@@ -259,20 +266,26 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
 
         if ($this->selected_page === 1) {
             $from = 2;
-            $to   = $from + $number_of_intermediate_buttons;
+            $to   = $this->max_buttons;
         } elseif ($this->selected_page === $number_of_pages) {
             $from = $number_of_pages - $number_of_intermediate_buttons;
             $to   = $number_of_pages;
         } else {
-            if (($this->selected_page + $number_of_intermediate_buttons) > $number_of_pages) {
-                $from = $number_of_pages - $number_of_intermediate_buttons;
-                $to   = $number_of_pages;
-            } elseif (($this->selected_page - 2) < 1) {
+            if ($this->selected_page < 3) {
                 $from = $this->selected_page;
                 $to   = $this->selected_page + $number_of_intermediate_buttons;
+            } elseif (($number_of_pages - $this->selected_page) < 3) {
+                $from = $number_of_pages - $number_of_intermediate_buttons;
+                $to   = $number_of_pages;
             } else {
-                $from = $this->selected_page - 1;
-                $to   = $this->selected_page + 2;
+                // @todo: Find a nicer solution for page 3
+                if ($this->force_button_count) {
+                    $from = $this->selected_page - floor($number_of_intermediate_buttons / 2);
+                    $to   = $this->selected_page + ceil($number_of_intermediate_buttons / 2) + ($this->selected_page === 3 && $this->max_buttons > 5);
+                } else {
+                    $from = $this->selected_page - 1;
+                    $to   = $this->selected_page + ($this->selected_page === 3 ? $number_of_intermediate_buttons - 1 : 2);
+                }
             }
         }
 
@@ -303,7 +316,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      */
     protected function generateCallbackData(int $page): string
     {
-        return "{$this->command}?currentPage={$this->selected_page}&nextPage={$page}";
+        return "command={$this->command}&currentPage={$this->selected_page}&nextPage={$page}";
     }
 
     /**
@@ -322,5 +335,19 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     protected function getOffset(): int
     {
         return $this->items_per_page * ($this->selected_page - 1);
+    }
+
+    /**
+     * Get the parameters from the calback query.
+     *
+     * @param string $data
+     *
+     * @return array
+     */
+    public static function getParametersFromCallbackData($data): array
+    {
+        parse_str($data, $params);
+
+        return $params;
     }
 }

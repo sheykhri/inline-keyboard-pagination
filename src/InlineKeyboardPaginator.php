@@ -22,11 +22,12 @@ interface InlineKeyboardPaginator
     /**
      * Set the maximum number of keyboard buttons to show.
      *
-     * @param int $max_buttons
+     * @param int  $max_buttons
+     * @param bool $force_button_count
      *
      * @return InlineKeyboardPagination
      */
-    public function setMaxButtons(int $max_buttons = 5): InlineKeyboardPagination;
+    public function setMaxButtons(int $max_buttons = 5, bool $force_button_count = false): InlineKeyboardPagination;
 
     /**
      * Set command for this pagination.
