@@ -250,8 +250,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
             $button['text'] = sprintf($label, $page);
         }
 
-        // Pagination has 1 single row of buttons, so wrap in (row) array.
-        return [array_values(array_filter($buttons))];
+        return array_values(array_filter($buttons));
     }
 
     /**

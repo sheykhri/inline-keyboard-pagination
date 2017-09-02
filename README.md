@@ -13,7 +13,6 @@
 - [Usage](#usage)
     - [Test Data](#test-data)
     - [How To Use](#how-to-use)
-    - [Result](#result)
 - [Code Quality](#code-quality)
 - [License](#license)
 
@@ -31,12 +30,13 @@ composer require php-telegram-bot/inline-keyboard-pagination:^1.0.0
 $items         = range(1, 100); // required. 
 $command       = 'testCommand'; // optional. Default: pagination
 $selected_page = 10;            // optional. Default: 1
-$labels        = [              // optional. Change button labels
-    'first'    => '%d',
-    'previous' => 'previous %d',
-    'current'  => null,
-    'next'     => '%d next',
-    'last'     => '%d',
+$labels        = [              // optional. Change button labels (showing defaults)
+    'default'  => '%d',
+    'first'    => '« %d',
+    'previous' => '‹ %d',
+    'current'  => '· %d ·',
+    'next'     => '%d ›',
+    'last'     => '%d »',
 ];
 ```
 
@@ -50,26 +50,44 @@ $ikp->setLabels($labels);
 // Get pagination.
 $pagination = $ikp->getPagination($selected_page);
 
-// or, in 2 steps:
+// or, in 2 steps.
 $ikp->setSelectedPage($selected_page);
 $pagination = $ikp->getPagination();
 ```
 
-### Result
-```php
-if (!empty($pagination['keyboard'])) {
-    $pagination['keyboard'][0]['callback_data']; // command=testCommand&currentPage=10&nextPage=1
-    $pagination['keyboard'][1]['callback_data']; // command=testCommand&currentPage=10&nextPage=7
-    ...
+Now, `$pagination['keyboard']` is basically a row that contains the pagination.
 
-    $response = [
-        'reply_markup' => [
-            'inline_keyboard' => [
-                $pagination['keyboard'],
-            ],
+```php
+// Use it in your request.
+if (!empty($pagination['keyboard'])) {
+    //$pagination['keyboard'][0]['callback_data']; // command=testCommand&currentPage=10&nextPage=1
+    //$pagination['keyboard'][1]['callback_data']; // command=testCommand&currentPage=10&nextPage=7
+    
+    ...
+    $data['reply_markup' => [
+        'inline_keyboard' => [
+            $pagination['keyboard'],
         ],
     ];
+    ...
 }
+```
+
+To get the callback data, you can use the provided helper method:
+```php
+// e.g. Callback data.
+$callback_data = 'command=testCommand&currentPage=10&nextPage=1';
+
+$params = InlineKeyboardPagination::getParametersFromCallbackData($callback_data);
+
+//$params = [
+//    'command'     => 'testCommand',
+//    'currentPage' => '10',
+//    'nextPage'    => '1',
+//];
+
+// or, just use PHP directly if you like. (literally what the helper does!)
+parse_str($callback_data, $params);
 ```
 
 ## Code Quality
