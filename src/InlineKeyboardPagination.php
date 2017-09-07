@@ -42,6 +42,11 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     private $command;
 
     /**
+     * @var string
+     */
+    private $callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}';
+
+    /**
      * @var array
      */
     private $labels = [
@@ -64,6 +69,30 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
         }
         $this->max_buttons        = $max_buttons;
         $this->force_button_count = $force_button_count;
+
+        return $this;
+    }
+
+    /**
+     * Get the current callback format.
+     *
+     * @return string
+     */
+    public function getCallbackDataFormat(): string
+    {
+        return $this->callback_data_format;
+    }
+
+    /**
+     * Set the callback_data format.
+     *
+     * @param string $callback_data_format
+     *
+     * @return InlineKeyboardPagination
+     */
+    public function setCallbackDataFormat(string $callback_data_format): InlineKeyboardPagination
+    {
+        $this->callback_data_format = $callback_data_format;
 
         return $this;
     }
@@ -315,7 +344,11 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      */
     protected function generateCallbackData(int $page): string
     {
-        return "command={$this->command}&currentPage={$this->selected_page}&nextPage={$page}";
+        return str_replace(
+            ['{COMMAND}', '{OLD_PAGE}', '{NEW_PAGE}'],
+            [$this->command, $this->selected_page, $page],
+            $this->callback_data_format
+        );
     }
 
     /**
@@ -337,7 +370,7 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
-     * Get the parameters from the calback query.
+     * Get the parameters from the callback query.
      *
      * @param string $data
      *

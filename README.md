@@ -38,6 +38,9 @@ $labels        = [              // optional. Change button labels (showing defau
     'next'     => '%d ›',
     'last'     => '%d »',
 ];
+
+// optional. Change the callback_data format, adding placeholders for data (showing default)
+$callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}'
 ```
 
 ### How To Use
@@ -46,6 +49,7 @@ $labels        = [              // optional. Change button labels (showing defau
 $ikp = new InlineKeyboardPagination($items, $command);
 $ikp->setMaxButtons(7, true); // Second parameter set to always show 7 buttons if possible.
 $ikp->setLabels($labels);
+$ikp->setCallbackDataFormat($callback_data_format);
 
 // Get pagination.
 $pagination = $ikp->getPagination($selected_page);
@@ -60,8 +64,8 @@ Now, `$pagination['keyboard']` is basically a row that contains the pagination.
 ```php
 // Use it in your request.
 if (!empty($pagination['keyboard'])) {
-    //$pagination['keyboard'][0]['callback_data']; // command=testCommand&currentPage=10&nextPage=1
-    //$pagination['keyboard'][1]['callback_data']; // command=testCommand&currentPage=10&nextPage=7
+    //$pagination['keyboard'][0]['callback_data']; // command=testCommand&oldPage=10&newPage=1
+    //$pagination['keyboard'][1]['callback_data']; // command=testCommand&oldPage=10&newPage=7
     
     ...
     $data['reply_markup' => [
@@ -73,17 +77,17 @@ if (!empty($pagination['keyboard'])) {
 }
 ```
 
-To get the callback data, you can use the provided helper method:
+To get the callback data, you can use the provided helper method (only works when using the default callback data format):
 ```php
 // e.g. Callback data.
-$callback_data = 'command=testCommand&currentPage=10&nextPage=1';
+$callback_data = 'command=testCommand&oldPage=10&newPage=1';
 
 $params = InlineKeyboardPagination::getParametersFromCallbackData($callback_data);
 
 //$params = [
-//    'command'     => 'testCommand',
-//    'currentPage' => '10',
-//    'nextPage'    => '1',
+//    'command' => 'testCommand',
+//    'oldPage' => '10',
+//    'newPage' => '1',
 //];
 
 // or, just use PHP directly if you like. (literally what the helper does!)

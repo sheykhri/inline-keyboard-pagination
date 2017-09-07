@@ -75,6 +75,27 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
         $ikp->getPagination();
     }
 
+    public function testCallbackDataFormat()
+    {
+        $ikp = new InlineKeyboardPagination(range(1, 10), 'cmd', 2, 5);
+
+        self::assertAllButtonPropertiesEqual([
+            [
+                'command=cmd&oldPage=2&newPage=1',
+                'command=cmd&oldPage=2&newPage=2',
+            ],
+        ], 'callback_data', [$ikp->getPagination()['keyboard']]);
+
+        $ikp->setCallbackDataFormat('{COMMAND};{OLD_PAGE};{NEW_PAGE}');
+
+        self::assertAllButtonPropertiesEqual([
+            [
+                'cmd;2;1',
+                'cmd;2;2',
+            ],
+        ], 'callback_data', [$ikp->getPagination()['keyboard']]);
+    }
+
     public function testCallbackDataParser()
     {
         $ikp  = new InlineKeyboardPagination($this->items, $this->command, $this->selected_page, $this->items_per_page);
@@ -83,9 +104,9 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
         $callback_data = $ikp::getParametersFromCallbackData($data['keyboard'][0]['callback_data']);
 
         self::assertSame([
-            'command'     => $this->command,
-            'currentPage' => "$this->selected_page",
-            'nextPage'    => '1', // because we're getting the button at position 0, which is page 1
+            'command' => $this->command,
+            'oldPage' => "$this->selected_page",
+            'newPage' => '1', // because we're getting the button at position 0, which is page 1
         ], $callback_data);
     }
 
@@ -121,9 +142,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
     public function testForceButtonsCount()
     {
-        $cbdata  = 'command=%s&currentPage=%d&nextPage=%d';
-        $command = 'cbdata';
-        $ikp     = new InlineKeyboardPagination(range(1, 10), $command, 1, 1);
+        $ikp = new InlineKeyboardPagination(range(1, 10), 'cbdata', 1, 1);
 
         // testing with 8 flexible buttons
         $ikp->setMaxButtons(8, false);
@@ -207,7 +226,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
     public function testButtonLabels()
     {
-        $cbdata  = 'command=%s&currentPage=%d&nextPage=%d';
+        $cbdata  = 'command=%s&oldPage=%d&newPage=%d';
         $command = 'cbdata';
         $ikp1    = new InlineKeyboardPagination(range(1, 1), $command, 1, $this->items_per_page);
         $ikp10   = new InlineKeyboardPagination(range(1, $this->items_per_page * 10), $command, 1, $this->items_per_page);
