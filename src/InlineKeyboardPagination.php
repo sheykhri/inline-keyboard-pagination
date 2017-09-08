@@ -147,6 +147,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
+     * Get the number of items shown per page.
+     *
      * @return int
      */
     public function getItemsPerPage(): int
@@ -155,6 +157,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
+     * Set how many items should be shown per page.
+     *
      * @param int $items_per_page
      *
      * @return InlineKeyboardPagination
@@ -171,6 +175,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
+     * Set the items for the pagination.
+     *
      * @param array $items
      *
      * @return InlineKeyboardPagination
@@ -362,6 +368,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     }
 
     /**
+     * Get the items offset for the selected page.
+     *
      * @return int
      */
     protected function getOffset(): int
@@ -371,6 +379,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
 
     /**
      * Get the parameters from the callback query.
+     *
+     * @todo Possibly make it work for custon formats too?
      *
      * @param string $data
      *

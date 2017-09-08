@@ -18,6 +18,10 @@ matrix:
     - php: hhvm
   fast_finish: true
 
+notifications:
+  on_success: never
+  on_failure: always
+
 git:
   depth: 1
 

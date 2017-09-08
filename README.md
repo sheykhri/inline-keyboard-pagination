@@ -1,10 +1,10 @@
-# Telegram Bot Inline Keyboard Pagination
+# [Telegram Bot Inline Keyboard Pagination][github-tgbot-ikp]
 
 [![Scrutinizer Code Quality][code-quality-badge]][code-quality]
 [![Codecov][code-coverage-badge]][code-coverage]
 [![Build Status][build-status-badge]][build-status]
 
-[![Latest Stable Version][latest-version-badge]][github-tgbot-ikp]
+[![Latest Stable Version][latest-version-badge]][packagist-tgbot-ikp]
 [![Total Downloads][total-downloads-badge]][packagist-tgbot-ikp]
 [![License][license-badge]][license]
 
