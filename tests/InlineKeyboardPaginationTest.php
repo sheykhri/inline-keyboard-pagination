@@ -65,7 +65,6 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
 
         $ikp = new InlineKeyboardPagination($this->items, $this->command, 10000, $this->itemsPerPage);
         $ikp->getPagination();
-
     }
 
     public function testEmptyItemsConstructor()
@@ -229,7 +228,7 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
         $this->expectException(
             \TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException::class
         );
-        
+
         $ikp = new InlineKeyboardPagination($this->items, $this->command, $this->selectedPage, 0);
         $ikp->getPagination();
     }
