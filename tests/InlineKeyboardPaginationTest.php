@@ -12,22 +12,22 @@ final class InlineKeyboardPaginationTest extends \PHPUnit\Framework\TestCase
     /**
      * @var int
      */
-    private int $itemsPerPage = 5;
+    private $itemsPerPage = 5;
 
     /**
      * @var int
      */
-    private int $selectedPage;
+    private $selectedPage;
 
     /**
      * @var string
      */
-    private string $command;
+    private $command;
 
     /**
      * @var array
      */
-    private array $items;
+    private $items;
 
     /**
      * InlineKeyboardPaginationTest constructor.

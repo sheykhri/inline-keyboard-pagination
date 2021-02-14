@@ -7,6 +7,8 @@ cache:
     - "$HOME/.composer/cache"
 
 php:
+  - 7.3
+  - 7.4
   - 8.0
   - nightly
   - hhvm
@@ -30,7 +32,7 @@ install:
 
 script:
   - composer check-code
-  - if [ "$TRAVIS_PHP_VERSION" == "8.0" ]; then composer test-cov; else composer test; fi
+  - if [ "$TRAVIS_PHP_VERSION" >= "7.3" ]; then composer test-cov; else composer test; fi
 
 after_script:
-  - if [ "$TRAVIS_PHP_VERSION" == "8.0" ]; then composer test-cov-upload; fi
+  - if [ "$TRAVIS_PHP_VERSION" >= "7.3" ]; then composer test-cov-upload; fi

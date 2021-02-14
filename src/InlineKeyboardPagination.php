@@ -2,8 +2,6 @@
 
 namespace TelegramBot\InlineKeyboardPagination;
 
-use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 use TelegramBot\InlineKeyboardPagination\Exceptions\InlineKeyboardPaginationException;
 
 /**
@@ -16,42 +14,42 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
     /**
      * @var int
      */
-    private int $itemsPerPage;
+    private $itemsPerPage;
 
     /**
      * @var int
      */
-    private int $maxButtons = 5;
+    private $maxButtons = 5;
 
     /**
      * @var bool
      */
-    private bool $forceButtonCount = false;
+    private $forceButtonCount = false;
 
     /**
      * @var int
      */
-    private int $selectedPage;
+    private $selectedPage;
 
     /**
      * @var array
      */
-    private array $items;
+    private $items;
 
     /**
      * @var string
      */
-    private string $command;
+    private $command;
 
     /**
      * @var string
      */
-    private string $callbackDataFormat = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}';
+    private $callbackDataFormat = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}';
 
     /**
      * @var array
      */
-    private array $labels = [
+    private $labels = [
         'default'  => '%d',
         'first'    => '« %d',
         'previous' => '‹ %d',
@@ -233,7 +231,6 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      * @inheritdoc
      * @throws InlineKeyboardPaginationException
      */
-    #[ArrayShape(['items' => 'array', 'keyboard' => 'array'])]
     public function getPagination(
         int $selectedPage = null
     ): array {
@@ -350,7 +347,6 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      *
      * @return array
      */
-    #[ArrayShape(['text' => 'string', 'callback_data' => 'string'])]
     protected function generateButton(
         int $page
     ): array {
@@ -381,7 +377,6 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      *
      * @return array
      */
-    #[Pure]
     protected function getPreparedItems(): array
     {
         return array_slice($this->items, $this->getOffset(), $this->itemsPerPage);
