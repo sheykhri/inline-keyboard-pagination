@@ -231,9 +231,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      * @inheritdoc
      * @throws InlineKeyboardPaginationException
      */
-    public function getPagination(
-        int $selectedPage = null
-    ): array {
+    public function getPagination(int $selectedPage = null): array
+    {
         if ($selectedPage !== null) {
             $this->setSelectedPage($selectedPage);
         }
@@ -347,9 +346,8 @@ class InlineKeyboardPagination implements InlineKeyboardPaginator
      *
      * @return array
      */
-    protected function generateButton(
-        int $page
-    ): array {
+    protected function generateButton(int $page): array
+    {
         return [
             'text'          => (string)$page,
             'callback_data' => $this->generateCallbackData($page),
