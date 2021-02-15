@@ -29,7 +29,7 @@ composer require php-telegram-bot/inline-keyboard-pagination:^1.0.0
 ```php
 $items         = range(1, 100); // required. 
 $command       = 'testCommand'; // optional. Default: pagination
-$selected_page = 10;            // optional. Default: 1
+$selectedPage = 10;            // optional. Default: 1
 $labels        = [              // optional. Change button labels (showing defaults)
     'default'  => '%d',
     'first'    => '« %d',
@@ -40,7 +40,7 @@ $labels        = [              // optional. Change button labels (showing defau
 ];
 
 // optional. Change the callback_data format, adding placeholders for data (showing default)
-$callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}'
+$callbackDataFormat = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}'
 ```
 
 ### How To Use
@@ -49,13 +49,13 @@ $callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}
 $ikp = new InlineKeyboardPagination($items, $command);
 $ikp->setMaxButtons(7, true); // Second parameter set to always show 7 buttons if possible.
 $ikp->setLabels($labels);
-$ikp->setCallbackDataFormat($callback_data_format);
+$ikp->setCallbackDataFormat($callbackDataFormat);
 
 // Get pagination.
-$pagination = $ikp->getPagination($selected_page);
+$pagination = $ikp->getPagination($selectedPage);
 
 // or, in 2 steps.
-$ikp->setSelectedPage($selected_page);
+$ikp->setSelectedPage($selectedPage);
 $pagination = $ikp->getPagination();
 ```
 
@@ -82,7 +82,7 @@ To get the callback data, you can use the provided helper method (only works whe
 // e.g. Callback data.
 $callback_data = 'command=testCommand&oldPage=10&newPage=1';
 
-$params = InlineKeyboardPagination::getParametersFromCallbackData($callback_data);
+$params = InlineKeyboardPagination::getParametersFromCallbackData($callbackData);
 
 //$params = [
 //    'command' => 'testCommand',
@@ -91,7 +91,7 @@ $params = InlineKeyboardPagination::getParametersFromCallbackData($callback_data
 //];
 
 // or, just use PHP directly if you like. (literally what the helper does!)
-parse_str($callback_data, $params);
+parse_str($callbackData, $params);
 ```
 
 ## Code Quality
