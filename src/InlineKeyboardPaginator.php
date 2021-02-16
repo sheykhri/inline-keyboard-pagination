@@ -14,20 +14,20 @@ interface InlineKeyboardPaginator
      *
      * @param array  $items
      * @param string $command
-     * @param int    $selected_page
-     * @param int    $items_per_page
+     * @param int    $selectedPage
+     * @param int    $itemsPerPage
      */
-    public function __construct(array $items, string $command, int $selected_page, int $items_per_page);
+    public function __construct(array $items, string $command, int $selectedPage, int $itemsPerPage);
 
     /**
      * Set the maximum number of keyboard buttons to show.
      *
-     * @param int  $max_buttons
-     * @param bool $force_button_count
+     * @param int  $maxButtons
+     * @param bool $forceButtonCount
      *
      * @return InlineKeyboardPagination
      */
-    public function setMaxButtons(int $max_buttons = 5, bool $force_button_count = false): InlineKeyboardPagination;
+    public function setMaxButtons(int $maxButtons = 5, bool $forceButtonCount = false): InlineKeyboardPagination;
 
     /**
      * Set command for this pagination.
@@ -41,18 +41,18 @@ interface InlineKeyboardPaginator
     /**
      * Set the selected page.
      *
-     * @param int $selected_page
+     * @param int $selectedPage
      *
      * @return InlineKeyboardPagination
      */
-    public function setSelectedPage(int $selected_page): InlineKeyboardPagination;
+    public function setSelectedPage(int $selectedPage): InlineKeyboardPagination;
 
     /**
      * Get the pagination data for the passed page.
      *
-     * @param int $selected_page
+     * @param int|null $selectedPage
      *
      * @return array
      */
-    public function getPagination(int $selected_page = null): array;
+    public function getPagination(?int $selectedPage = null): array;
 }
