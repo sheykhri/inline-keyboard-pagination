@@ -40,7 +40,7 @@ $labels        = [              // optional. Change button labels (showing defau
 ];
 
 // optional. Change the callback_data format, adding placeholders for data (showing default)
-$callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}'
+$callback_data_format = 'command={COMMAND}&oldPage={OLD_PAGE}&newPage={NEW_PAGE}';
 ```
 
 ### How To Use
